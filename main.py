@@ -18,6 +18,8 @@ def main():
     clock = pygame.time.Clock()
     dt = 0
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.font.init()
+    font = pygame.font.SysFont("monospace", 35)
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
@@ -28,6 +30,8 @@ def main():
     asteroid_field = AsteroidField()
     shots = pygame.sprite.Group()
     Shot.containers = (shots, drawable, updatable)
+    player_score = 0
+    print(f"score: {player_score}")
     while(True):
         log_state()
         for event in pygame.event.get():
@@ -39,6 +43,8 @@ def main():
             for shot in shots:
                 if (asteroid.collides_with(shot) == True):
                     log_event("asteroid_shot")
+                    player_score += 1
+                    print(f"score: {player_score}")
                     shot.kill()
                     asteroid.split()
             if (asteroid.collides_with(player) == True):
@@ -49,6 +55,13 @@ def main():
         
         for each in drawable:
             each.draw(screen)
+        
+        # Render the text into an 'image'
+        # The arguments are: (string, anti-aliasing, color)
+        score_surface = font.render(f"Score: {player_score}", True, (255, 255, 255))
+
+        # Draw (blit) it to the screen at coordinates (x, y)
+        screen.blit(score_surface, (10, 10))
         pygame.display.flip()
         dt = clock.tick(60) / 1000
 
